@@ -2,6 +2,7 @@ package com.ridexone.appmerchandise
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
@@ -25,22 +26,40 @@ data class Merchandise(
 
 class DashboardActivity : ComponentActivity() {
 
-    private val merchandiseList = listOf(
-        Merchandise("DeadSquad - Curse Of The Black Plague", "Kaos resmi DeadSquad dengan desain album Curse Of The Black Plague, bahan cotton combed berkualitas.", 180000.0, 5),
-        Merchandise("COLORCODE - Check My Sanity", "Kaos band COLORCODE dengan tema album Check My Sanity, nyaman dipakai sehari-hari.", 155000.0, 2),
-        Merchandise("KOIL - Megalo Emperor", "Kaos KOIL dengan desain Megalo Emperor, cocok untuk penggemar musik rock lokal.", 160000.0, 6),
-        Merchandise("Revenge The Fate - Sinsera", "Merchandise resmi Revenge The Fate bertema Sinsera, kualitas premium dan limited stock.", 200000.0, 8),
-        Merchandise("Eastcape - Obsessed", "Kaos Eastcape dengan desain Obsessed, bahan nyaman dan tahan lama.", 180000.0, 1),
-        Merchandise("The Sigit - Another Day", "Merchandise The Sigit bertema Another Day, pilihan tepat untuk koleksi fans sejati.", 160000.0, 2),
-        Merchandise("Morfem - Sneakerfuzz", "Kaos Morfem dengan desain Sneakerfuzz, tampil beda dengan gaya unik.", 140000.0, 9),
-        Merchandise("Darksovls - Radiusinis", "Merchandise Darksovls bertema Radiusinis, limited edition dan eksklusif.", 160000.0, 3),
-        Merchandise("Modern Guns - Everything Falls Apart", "Kaos Modern Guns dengan tema Everything Falls Apart, cocok untuk penggemar musik alternatif.", 160000.0, 2),
-        Merchandise("Puupen - Injak Balik!", "Merchandise Puupen dengan desain Injak Balik!, koleksi langka dan bernilai.", 190000.0, 1)
-    )
+    private lateinit var dbHelper: DatabaseHelper
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        dbHelper = DatabaseHelper(this)
+
+        // call insert func
+        dbHelper.insertMerchandiseDataIfEmpty()
+        /*
+        val updatedMerchandise = Merchandise(
+            name = "DeadSquad - Curse Of The Black Plague",
+            description = "Desain terbaru, bahan cotton combed premium.",
+            price = 185000.0,
+            stock = 10
+        )
+        // call update func
+        val rowsUpdated = dbHelper.updateMerchandise(updatedMerchandise)
+        if (rowsUpdated > 0) {
+            Log.d("DatabaseUpdate", "Update berhasil, jumlah baris yang diupdate: $rowsUpdated")
+        } else {
+            Log.d("DatabaseUpdate", "Update gagal atau data tidak ditemukan")
+        }
+
+        val nameToDelete = "COLORCODE - Check My Sanity"
+        // call delete func
+        val rowsDeleted = dbHelper.deleteMerchandiseByName(nameToDelete)
+        if (rowsDeleted > 0) {
+            Log.d("DatabaseDelete", "Data berhasil dihapus, jumlah baris yang dihapus: $rowsDeleted")
+        } else {
+            Log.d("DatabaseDelete", "Data tidak ditemukan atau gagal dihapus")
+        }
+        */
         val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val username = sharedPref.getString("username", "User") ?: "User"
 
@@ -88,7 +107,11 @@ class DashboardActivity : ComponentActivity() {
                             style = MaterialTheme.typography.headlineSmall,
                             modifier = Modifier.padding(bottom = 12.dp)
                         )
-                        MerchandiseListScreen(merchandiseList, username) { merchandise, quantity ->
+
+                        // Ambil data merchandise dari database
+                        val merchandiseListDB = dbHelper.getAllMerchandise()
+
+                        MerchandiseListScreen(merchandiseListDB, username) { merchandise, quantity ->
                             val intent = Intent(this@DashboardActivity, PurchaseConfirmActivity::class.java).apply {
                                 putExtra("username", username)
                                 putExtra("name", merchandise.name)
