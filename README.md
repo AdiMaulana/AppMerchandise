@@ -25,9 +25,20 @@ AppMerchandise adalah aplikasi Android yang dibuat sebagai proyek tugas mata kul
 
 ## Screenshots
 
-![Login Page](https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/1.registrasi.jpg) ![!Register Page](https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/2.%20login.jpg) ![Dashboard Page](https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/3.%20list%20view.jpg) ![Item Page](https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/4.%20detail%20item.jpg)
 
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
 
+  <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/1.registrasi.jpg" alt="Screenshot 1" width="23%" />
+  <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/2.%20login.jpg" alt="Screenshot 2" width="23%" />
+  <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/3.%20list%20view.jpg" alt="Screenshot 3" width="23%" />
+  <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/4.%20detail%20item.jpg" alt="Screenshot 4" width="23%" />
+
+  <img src="images/screenshot5.png" alt="Screenshot 5" width="23%" style="margin-top: 16px;" />
+  <img src="images/screenshot6.png" alt="Screenshot 6" width="23%" style="margin-top: 16px;" />
+  <img src="images/screenshot7.png" alt="Screenshot 7" width="23%" style="margin-top: 16px;" />
+  <img src="images/screenshot8.png" alt="Screenshot 8" width="23%" style="margin-top: 16px;" />
+
+</div>
 ---
 
 ## Architecture & Components
