@@ -25,7 +25,7 @@ AppMerchandise adalah aplikasi Android yang dibuat sebagai proyek tugas mata kul
 
 ## Screenshots
 
-
+<!--
 <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
 
   <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/1.registrasi.jpg" alt="Screenshot 1" width="23%" />
@@ -39,19 +39,21 @@ AppMerchandise adalah aplikasi Android yang dibuat sebagai proyek tugas mata kul
   <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/8.%20resi.jpg" alt="Screenshot 8" width="23%" style="margin-top: 16px;" />
 
 </div>
----
+-->
+
 
 <div style="display: flex; flex-wrap: nowrap; justify-content: space-between; align-items: center;">
-
-  <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/1.registrasi.jpg" alt="Screenshot 1" width="11%" />
-  <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/2.%20login.jpg" alt="Screenshot 2" width="11%" />
-  <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/3.%20list%20view.jpg" alt="Screenshot 3" width="11%" />
-  <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/4.%20detail%20item.jpg" alt="Screenshot 4" width="11%" />
-  <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/5.%20beli.jpg" alt="Screenshot 5" width="11%"/>
-  <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/6.%20konfirmasi.jpg" alt="Screenshot 6" width="11%"/>
-  <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/7.%20check%20password.jpg" alt="Screenshot 7" width="11%"/>
-  <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/8.%20resi.jpg" alt="Screenshot 8" width="11%"/>
+  <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/1.registrasi.jpg" alt="Screenshot 1" width="20%" />
+  <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/2.%20login.jpg" alt="Screenshot 2" width="20%" />
+  <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/3.%20list%20view.jpg" alt="Screenshot 3" width="20%" />
+  <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/4.%20detail%20item.jpg" alt="Screenshot 4" width="20%" />
+  <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/5.%20beli.jpg" alt="Screenshot 5" width="20%"/>
+  <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/6.%20konfirmasi.jpg" alt="Screenshot 6" width="20%"/>
+  <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/7.%20check%20password.jpg" alt="Screenshot 7" width="20%"/>
+  <img src="https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/8.%20resi.jpg" alt="Screenshot 8" width="20%"/>
 </div>
+
+---
 
 ## Architecture & Components
 
