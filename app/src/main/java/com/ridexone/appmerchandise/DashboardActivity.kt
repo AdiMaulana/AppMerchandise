@@ -2,11 +2,14 @@ package com.ridexone.appmerchandise
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.*
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.*
@@ -15,27 +18,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.google.android.gms.maps.model.CameraPosition
 import com.ridexone.appmerchandise.ui.theme.AppMerchandiseTheme
 
 data class Merchandise(
     val name: String,
     val description: String,
     val price: Double,
-    val stock: Int
+    val stock: Int,
+    val storeLocation: LatLng = LatLng(-6.200000, 106.816666) // Semua item di Jakarta, misal
 )
 
 class DashboardActivity : ComponentActivity() {
 
-    private lateinit var dbHelper: DatabaseHelper
-
+    private lateinit var AppDbHelper: AppDatabaseHelper
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        dbHelper = DatabaseHelper(this)
+        AppDbHelper = AppDatabaseHelper(this)
 
         // call insert func
-        dbHelper.insertMerchandiseDataIfEmpty()
+        AppDbHelper.insertMerchandiseDataIfEmpty()
         /*
         val updatedMerchandise = Merchandise(
             name = "DeadSquad - Curse Of The Black Plague",
@@ -109,7 +113,7 @@ class DashboardActivity : ComponentActivity() {
                         )
 
                         // Ambil data merchandise dari database
-                        val merchandiseListDB = dbHelper.getAllMerchandise()
+                        val merchandiseListDB = AppDbHelper.getAllMerchandise()
 
                         MerchandiseListScreen(merchandiseListDB, username) { merchandise, quantity ->
                             val intent = Intent(this@DashboardActivity, PurchaseConfirmActivity::class.java).apply {
@@ -134,43 +138,60 @@ fun MerchandiseListScreen(
     username: String,
     onBuyConfirmed: (Merchandise, Int) -> Unit
 ) {
-    var selectedMerchandise by remember { mutableStateOf<Merchandise?>(null) }
-    var showDialog by remember { mutableStateOf(false) }
+    var selectedDetailMerchandise by remember { mutableStateOf<Merchandise?>(null) }
+    var showDetailDialog by remember { mutableStateOf(false) }
     var purchaseQuantity by remember { mutableStateOf("") }
+    var showPurchaseDialog by remember { mutableStateOf(false) }
 
-    androidx.compose.foundation.lazy.LazyColumn(
+    LazyColumn(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier.fillMaxSize()
     ) {
         items(merchandiseList) { item ->
-            MerchandiseItem(item) {
-                selectedMerchandise = it
-                purchaseQuantity = ""
-                showDialog = true
-            }
+            MerchandiseItem(
+                item = item,
+                onItemClick = {
+                    selectedDetailMerchandise = it
+                    showDetailDialog = true
+                },
+                onBuyClick = {
+                    selectedDetailMerchandise = it
+                    purchaseQuantity = ""
+                    showPurchaseDialog = true
+                }
+            )
         }
     }
 
-    if (showDialog && selectedMerchandise != null) {
+    // Detail dialog with maps, no purchase input
+    if (showDetailDialog && selectedDetailMerchandise != null) {
+        MerchandiseDetailDialog(
+            merchandise = selectedDetailMerchandise!!,
+            onDismiss = { showDetailDialog = false }
+        )
+    }
+
+    // Purchase dialog with quantity input (existing)
+    if (showPurchaseDialog && selectedDetailMerchandise != null) {
         PurchaseDialog(
-            merchandise = selectedMerchandise!!,
+            merchandise = selectedDetailMerchandise!!,
             quantity = purchaseQuantity,
             onQuantityChange = { input ->
                 if (input.all { it.isDigit() }) {
                     val qty = input.toIntOrNull() ?: 0
-                    if (qty <= selectedMerchandise!!.stock) {
+                    if (qty <= selectedDetailMerchandise!!.stock) {
                         purchaseQuantity = input
                     }
                 } else if (input.isEmpty()) {
                     purchaseQuantity = ""
                 }
             },
-            onDismiss = { showDialog = false },
+            onDismiss = { showPurchaseDialog = false },
             onConfirm = {
                 val qty = purchaseQuantity.toIntOrNull() ?: 0
-                if (qty in 1..selectedMerchandise!!.stock) {
-                    onBuyConfirmed(selectedMerchandise!!, qty)
-                    showDialog = false
+                if (qty in 1..selectedDetailMerchandise!!.stock) {
+                    onBuyConfirmed(selectedDetailMerchandise!!, qty)
+                    showPurchaseDialog = false
                 }
             }
         )
@@ -178,12 +199,18 @@ fun MerchandiseListScreen(
 }
 
 @Composable
-fun MerchandiseItem(item: Merchandise, onBuyClick: (Merchandise) -> Unit) {
+fun MerchandiseItem(
+    item: Merchandise,
+    onItemClick: (Merchandise) -> Unit,
+    onBuyClick: (Merchandise) -> Unit
+) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val buttonWidth = screenWidth / 2 - 32.dp
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onItemClick(item) }, // klik seluruh card kecuali tombol
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -199,7 +226,10 @@ fun MerchandiseItem(item: Merchandise, onBuyClick: (Merchandise) -> Unit) {
                 horizontalArrangement = Arrangement.End
             ) {
                 Button(
-                    onClick = { onBuyClick(item) },
+                    onClick = {
+                        // Cegah event click card agar tidak memicu detail dialog
+                        onBuyClick(item)
+                    },
                     enabled = item.stock > 0,
                     modifier = Modifier.width(buttonWidth)
                 ) {
@@ -208,6 +238,58 @@ fun MerchandiseItem(item: Merchandise, onBuyClick: (Merchandise) -> Unit) {
             }
         }
     }
+}
+
+@Composable
+fun MerchandiseDetailDialog(
+    merchandise: Merchandise,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Detail Merchandise") },
+        text = {
+            Column {
+                Text(text = merchandise.name, style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = merchandise.description, style = MaterialTheme.typography.bodyMedium)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "Harga: Rp ${merchandise.price.toInt()}", style = MaterialTheme.typography.bodyLarge)
+                Text(text = "Stok tersedia: ${merchandise.stock}", style = MaterialTheme.typography.bodySmall)
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text("Lokasi Store:", style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(8.dp))
+
+                val sampleLocation = LatLng(-6.873666927835847, 107.55257939478201) // Cimahi
+                val cameraPositionState = rememberCameraPositionState {
+                    position = CameraPosition.fromLatLngZoom(sampleLocation, 15f)
+                }
+
+                GoogleMap(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    cameraPositionState = cameraPositionState,
+                    uiSettings = MapUiSettings(
+                        zoomControlsEnabled = true,
+                        mapToolbarEnabled = true,
+                    )
+                ) {
+                    Marker(
+                        state = MarkerState(position = sampleLocation),
+                        title = merchandise.name,
+                        snippet = "Jakarta"
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Tutup")
+            }
+        }
+    )
 }
 
 @Composable

@@ -56,11 +56,17 @@ dependencies {
 
     // Tambahkan material-icons-extended dari version catalog
     implementation(libs.androidx.compose.material.icons.extended)
-
+    implementation(libs.zxing.core)
+    implementation(libs.zxing.android.embedded)
+    implementation(libs.play.services.maps)
+    implementation(libs.maps.compose)
+    // Jika pakai Maps Compose untuk Jetpack Compose
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+
 }

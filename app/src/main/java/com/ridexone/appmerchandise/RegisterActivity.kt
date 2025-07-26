@@ -15,11 +15,11 @@ import com.ridexone.appmerchandise.ui.theme.AppMerchandiseTheme
 
 class RegisterActivity : ComponentActivity() {
 
-    private lateinit var dbHelper: UserDatabaseHelper
+    private lateinit var AppDbHelper: AppDatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dbHelper = UserDatabaseHelper(this)
+        AppDbHelper = AppDatabaseHelper(this)
 
         setContent {
             AppMerchandiseTheme {
@@ -29,7 +29,7 @@ class RegisterActivity : ComponentActivity() {
                 ) {
                     RegistrationScreen(
                         onRegister = { fullName, phone, email, username, password ->
-                            val success = dbHelper.insertUser(fullName.trim(), phone.trim(), email.trim(), username.trim(), password.trim())
+                            val success = AppDbHelper.insertUser(fullName.trim(), phone.trim(), email.trim(), username.trim(), password.trim())
                             val context = this@RegisterActivity
                             if (success) {
                                 Toast.makeText(context, "Registrasi berhasil!", Toast.LENGTH_LONG).show()

@@ -20,11 +20,11 @@ import com.ridexone.appmerchandise.ui.theme.AppMerchandiseTheme
 
 class LoginActivity : ComponentActivity() {
 
-    private lateinit var dbHelper: UserDatabaseHelper
+    private lateinit var AppDbHelper: AppDatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dbHelper = UserDatabaseHelper(this)
+        AppDbHelper = AppDatabaseHelper(this)
 
         setContent {
             AppMerchandiseTheme {
@@ -44,7 +44,7 @@ class LoginActivity : ComponentActivity() {
                             startActivity(intent)
                             finish()
                         },
-                        dbHelper = dbHelper
+                        dbHelper = AppDbHelper
                     )
                 }
             }
@@ -53,7 +53,7 @@ class LoginActivity : ComponentActivity() {
 }
 
 @Composable
-fun LoginScreen(onLoginSuccess: (String) -> Unit, dbHelper: UserDatabaseHelper) {
+fun LoginScreen(onLoginSuccess: (String) -> Unit, dbHelper: AppDatabaseHelper) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val isLoginEnabled = username.isNotBlank() && password.isNotBlank()

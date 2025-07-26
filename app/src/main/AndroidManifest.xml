@@ -34,7 +34,15 @@
         <activity android:name=".PurchasePasswordActivity" />
         <activity android:name=".PurchaseReceiptActivity" />
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBnHGNoiS7uqilxPTK_g_T4Ek87NfuYIVA" />
+
     </application>
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
 </manifest>

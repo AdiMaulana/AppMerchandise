@@ -4,12 +4,17 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
+import android.graphics.Bitmap
 import com.ridexone.appmerchandise.ui.theme.AppMerchandiseTheme
+import com.ridexone.appmerchandise.util.generateQrCode
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -75,13 +80,37 @@ fun PurchaseReceiptScreen(
     orderDate: String,
     onFinish: () -> Unit
 ) {
+    // Buat data JSON string untuk QR code
+    val purchaseDataJson = remember(name, description, price, quantity, address, orderNumber, orderDate) {
+        """
+        {
+            "orderNumber": "$orderNumber",
+            "orderDate": "$orderDate",
+            "name": "$name",
+            "description": "$description",
+            "price": $price,
+            "quantity": $quantity,
+            "address": "$address"
+        }
+        """.trimIndent()
+    }
+
+    // State menyimpan bitmap QR code
+    var qrCodeBitmap by remember { mutableStateOf<Bitmap?>(null) }
+
+    // Generate QR code bitmap dengan ukuran lebih besar (500x500)
+    LaunchedEffect(purchaseDataJson) {
+        qrCodeBitmap = generateQrCode(purchaseDataJson, 500, 500)
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text("Bukti Pembelian", style = MaterialTheme.typography.headlineMedium)
@@ -97,6 +126,21 @@ fun PurchaseReceiptScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 Text("Alamat Pengiriman:", style = MaterialTheme.typography.titleMedium)
                 Text(address, style = MaterialTheme.typography.bodyMedium)
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text("Scan QR Code :", style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(8.dp))
+
+                qrCodeBitmap?.let {
+                    Image(
+                        bitmap = it.asImageBitmap(),
+                        contentDescription = "Scan QR",
+                        modifier = Modifier
+                            .size(300.dp)  // ukuran tampilan QR Code diperbesar
+                            .align(Alignment.CenterHorizontally)
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(24.dp))
                 Text("Terima kasih telah melakukan pembelian!", style = MaterialTheme.typography.bodyLarge)
             }

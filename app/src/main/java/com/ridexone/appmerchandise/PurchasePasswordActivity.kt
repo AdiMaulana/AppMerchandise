@@ -16,11 +16,12 @@ import com.ridexone.appmerchandise.ui.theme.AppMerchandiseTheme
 
 class PurchasePasswordActivity : ComponentActivity() {
 
-    private lateinit var dbHelper: UserDatabaseHelper
+    private lateinit var AppDbHelper: AppDatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dbHelper = UserDatabaseHelper(this)
+
+        AppDbHelper = AppDatabaseHelper(this)
 
         val username = intent.getStringExtra("username") ?: ""
         val name = intent.getStringExtra("name") ?: ""
@@ -38,17 +39,47 @@ class PurchasePasswordActivity : ComponentActivity() {
                     PurchasePasswordScreen(
                         onVerify = { password ->
                             Log.d("DEBUG", "Username: '${username.trim()}', Password input: '${password.trim()}'")
-                            val isValid = dbHelper.verifyUserPassword(username, password)
+                            val isValid = AppDbHelper.verifyUserPassword(username, password)
                             if (isValid) {
-                                val intent = Intent(this, PurchaseReceiptActivity::class.java).apply {
-                                    putExtra("name", name)
-                                    putExtra("description", description)
-                                    putExtra("price", price)
-                                    putExtra("quantity", quantity)
-                                    putExtra("address", address)
+                                // Password benar → simpan transaksi ke database
+                                val orderNumber = generateOrderNumber()
+                                val orderDate = getCurrentDateString()
+
+                                val userId = AppDbHelper.getUserIdByUsername(username)
+
+                                if (userId == null) {
+                                    Toast.makeText(this, "User tidak ditemukan", Toast.LENGTH_SHORT).show()
+                                    return@PurchasePasswordScreen // atau tangani error sesuai kebutuhan
                                 }
-                                startActivity(intent)
-                                finish()
+
+                                val amount = price * quantity
+
+                                val success = AppDbHelper.insertTransactionAndReduceStock(
+                                    merchandiseName = name,
+                                    quantity = quantity,
+                                    orderNumber = orderNumber,
+                                    orderDate = orderDate,
+                                    address = address,
+                                    userId = userId,
+                                    amount = amount
+                                )
+
+                                if (success) {
+                                    // Lanjutkan ke tampilan bukti pembelian
+                                    val intent = Intent(this, PurchaseReceiptActivity::class.java).apply {
+                                        putExtra("orderNumber", orderNumber)
+                                        putExtra("orderDate", orderDate)
+                                        putExtra("name", name)
+                                        putExtra("description", description)
+                                        putExtra("price", price)
+                                        putExtra("quantity", quantity)
+                                        putExtra("address", address)
+                                    }
+                                    startActivity(intent)
+                                    finish()
+                                } else {
+                                    Toast.makeText(this, "Gagal menyimpan pembelian, stok kurang atau error", Toast.LENGTH_LONG).show()
+                                }
                             } else {
                                 Toast.makeText(this, "Password salah", Toast.LENGTH_SHORT).show()
                             }
@@ -57,6 +88,18 @@ class PurchasePasswordActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    // Fungsi sederhana generate nomor pesanan unik
+    private fun generateOrderNumber(): String {
+        val timestamp = System.currentTimeMillis()
+        return "ORD-$timestamp"
+    }
+
+    // Fungsi format tanggal saat ini
+    private fun getCurrentDateString(): String {
+        val sdf = java.text.SimpleDateFormat("dd MMM yyyy HH:mm:ss", java.util.Locale.getDefault())
+        return sdf.format(java.util.Date())
     }
 }
 
