@@ -25,7 +25,7 @@ AppMerchandise adalah aplikasi Android yang dibuat sebagai proyek tugas mata kul
 
 ## Screenshots
 
-![Login Page](https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/1.registrasi.jpg)
+![Login Page](https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/1.registrasi.jpg) ![!Register Page](https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/2.%20login.jpg) ![Dashboard Page](https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/3.%20list%20view.jpg) ![Item Page](https://raw.githubusercontent.com/AdiMaulana/AppMerchandise/refs/heads/master/capture/4.%20detail%20item.jpg)
 
 
 ---
